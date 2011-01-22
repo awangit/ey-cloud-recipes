@@ -3,7 +3,17 @@
 # Recipe:: default
 #
 
-if node[:instance_role] == "solo" || (node[:instance_role] == "util" && node[:name] !~ /^(mongodb|redis|memcache)/)
+# node[:instance_role]
+  # solo = Staging 1, 2
+  # util = Prod utility server
+  # app_master = Prod app master
+  # app = Prod app
+# node[:name]
+  # Memcached = Prod memcached server, '!~ /^(mongodb|redis|memcache|Memcache)/' will parse and not let it run on our memcached servers
+    # ex. 'Memcached' !~ /^(mongodb|redis|memcache|Memcache)/
+
+# Only run for Staging and Prod Util (non-memcache) Servers
+if node[:instance_role] == "solo" || (node[:instance_role] == "util" && node[:name] !~ /^(mongodb|redis|memcache|Memcache)/) #node[:instance_role] == "solo" || (node[:instance_role] == "util" && node[:name] !~ /^(mongodb|redis|memcache)/)
   node[:applications].each do |app_name,data|
   
     # determine the number of workers to run based on instance size
